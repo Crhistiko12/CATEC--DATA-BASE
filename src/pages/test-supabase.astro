@@ -1,0 +1,25 @@
+---
+import { supabase } from '../lib/supabase';
+
+// Prueba simple de conexión
+const { data, error } = await supabase
+  .from('productos') // Cambia por tu tabla real
+  .select('*')
+  .limit(1);
+---
+
+<h1>Prueba de conexión Supabase</h1>
+
+{error ? (
+  <div style="color: red; padding: 1rem; background: #ffeeee;">
+    <h2>Error de conexión</h2>
+    <p><strong>Tipo:</strong> {error.code}</p>
+    <p><strong>Mensaje:</strong> {error.message}</p>
+    <p><strong>Detalles:</strong> {error.details}</p>
+  </div>
+) : (
+  <div style="color: green; padding: 1rem; background: #eeffee;">
+    <h2>¡Conexión exitosa!</h2>
+    <pre>{JSON.stringify(data, null, 2)}</pre>
+  </div>
+)}

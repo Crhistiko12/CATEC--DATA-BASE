@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /tmp/
+Disallow: /admin/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /account/
+
+# Sitemap (¡IMPORTANTE!)
+Sitemap: https://kukipetsbo.com/sitemap.xml
+
+# Crawl-delay (opcional, si tienes muchos bots)
+Crawl-delay: 2
+
+# Reglas específicas para bots (ejemplo)
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /

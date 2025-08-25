@@ -1,0 +1,81 @@
+---
+// Ejemplo completo de cómo usar Supabase en páginas Astro
+import { supabase, getCart, addToCart } from '../lib/supabase.js';
+
+// Ejemplo: Obtener productos
+const { data: productos, error: errorProductos } = await supabase
+  .from('productos')
+  .select('*')
+  .limit(5);
+
+// Ejemplo: Obtener carrito de un usuario específico
+const userId = 1; // En una app real, esto vendría de autenticación
+const { data: carrito, error: errorCarrito } = await getCart(userId);
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ejemplos de Supabase API</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; }
+        .section { margin: 2rem 0; padding: 1rem; border: 1px solid #ddd; }
+        .error { color: red; background: #ffeeee; padding: 1rem; }
+        .success { color: green; background: #eeffee; padding: 1rem; }
+        pre { background: #f5f5f5; padding: 1rem; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>🚀 KukiPets - Ejemplos de Supabase</h1>
+    
+    <div class="section">
+        <h2>📦 Productos</h2>
+        {errorProductos ? (
+            <div class="error">
+                <p><strong>Error:</strong> {errorProductos.message}</p>
+            </div>
+        ) : (
+            <div class="success">
+                <p><strong>Productos encontrados:</strong> {productos?.length || 0}</p>
+                <pre>{JSON.stringify(productos, null, 2)}</pre>
+            </div>
+        )}
+    </div>
+
+    <div class="section">
+        <h2>🛒 Carrito</h2>
+        {errorCarrito ? (
+            <div class="error">
+                <p><strong>Error:</strong> {errorCarrito.message}</p>
+            </div>
+        ) : (
+            <div class="success">
+                <p><strong>Items en carrito:</strong> {carrito?.length || 0}</p>
+                <pre>{JSON.stringify(carrito, null, 2)}</pre>
+            </div>
+        )}
+    </div>
+
+    <div class="section">
+        <h2>📝 Código de Ejemplo</h2>
+        <p>Para usar estas funciones en tus páginas:</p>
+        <pre><code>
+// En cualquier página .astro
+---
+import { supabase, getCart, addToCart } from '../lib/supabase.js';
+
+// Obtener datos
+const { data, error } = await supabase
+  .from('tu_tabla')
+  .select('*');
+---
+
+&lt;div&gt;
+  {data?.map(item =&gt; (
+    &lt;p&gt;{item.nombre}&lt;/p&gt;
+  ))}
+&lt;/div&gt;
+        </code></pre>
+    </div>
+</body>
+</html>
