@@ -1,0 +1,97 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+<BaseLayout>
+  <section class="container mx-auto px-4 py-10">
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6">
+      <div id="state-loading" class="flex items-center gap-3 text-orange-600">
+        <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" class="opacity-25"/><path d="M4 12a8 8 0 018-8" stroke-width="4" class="opacity-75"/></svg>
+        <p class="font-semibold">Cargando tu pedido...</p>
+      </div>
+
+      <div id="state-error" class="hidden bg-red-50 text-red-700 border border-red-200 rounded-lg p-4"></div>
+
+      <div id="state-ok" class="hidden">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">¡Gracias por tu compra!</h1>
+        <p class="text-gray-600 mb-6">Tu pedido se ha creado correctamente.</p>
+
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-6">
+          <p class="text-sm text-gray-600">Número de orden</p>
+          <p id="order-number" class="text-xl font-semibold text-gray-900">-</p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-bold text-gray-900 mb-3">Resumen</h2>
+          <ul id="items" class="divide-y divide-gray-200 mb-4"></ul>
+          <div class="flex justify-between items-center pt-3 border-t">
+            <span class="text-lg font-semibold">Total</span>
+            <span id="total" class="text-xl font-bold text-orange-600">-</span>
+          </div>
+        </div>
+
+        <div class="mt-8 flex gap-3">
+          <a href="/productos" class="inline-flex items-center px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-400 font-semibold">Seguir comprando</a>
+          <a href="/" class="inline-flex items-center px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-800 font-semibold">Ir al inicio</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="module">
+    import { getOrderById } from "../../js/orders.js";
+
+    const $ = (s) => document.querySelector(s);
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get("orderId");
+
+    async function load() {
+      if (!orderId) {
+        showError("Falta el parámetro orderId en la URL.");
+        return;
+      }
+      try {
+        const { order, items } = await getOrderById(orderId);
+        render(order, items);
+      } catch (e) {
+        showError(e.message || "No se pudo cargar el pedido");
+      }
+    }
+
+    function showError(msg) {
+      $("#state-loading").classList.add("hidden");
+      const box = $("#state-error");
+      box.textContent = msg;
+      box.classList.remove("hidden");
+    }
+
+    function render(order, items) {
+      $("#state-loading").classList.add("hidden");
+      $("#state-ok").classList.remove("hidden");
+
+      $("#order-number").textContent = String(order.id);
+
+      const ul = $("#items");
+      ul.innerHTML = "";
+      items.forEach((it) => {
+        const name = it.producto?.nombre || `Producto #${it.producto_id}`;
+        const li = document.createElement("li");
+        li.className = "py-3 flex justify-between items-center";
+        li.innerHTML = `
+          <div>
+            <p class="font-medium text-gray-900">${name}</p>
+            <p class="text-sm text-gray-500">x${it.cantidad}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-gray-900 font-semibold">Bs ${Number(it.subtotal || 0).toFixed(2)}</p>
+            <p class="text-xs text-gray-500">Bs ${Number(it.precio_unitario || 0).toFixed(2)} c/u</p>
+          </div>
+        `;
+        ul.appendChild(li);
+      });
+
+      $("#total").textContent = `Bs ${Number(order.total_amount || 0).toFixed(2)}`;
+    }
+
+    load();
+  </script>
+</BaseLayout>

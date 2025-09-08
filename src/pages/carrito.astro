@@ -1,247 +1,341 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCart } from '../lib/supabase';
 
-// Obtener el ID del usuario (debes implementar autenticación después)
-const userId = 'usuario-temporal'; // Temporal - reemplazar con autenticación real
+// SEO Metadata
+const pageTitle = "Carrito de Compras | KukiPets Santa Cruz";
+const pageDescription = "Completa tu pedido de productos para mascotas en KukiPets. Envíos rápidos en Santa Cruz, Bolivia. ¿Necesitas ayuda? Llámanos al +591 77970901";
+const keywords = "carrito mascotas, comprar productos mascotas, tienda mascotas Santa Cruz, KukiPets Bolivia, comprar online mascotas";
 
-// Obtener los items del carrito desde Supabase
-const { data: cartItems } = await getCart(userId);
-
+// Datos NAP para JSON-LD
+const businessData = {
+  "@context": "https://schema.org",
+  "@type": "PetStore",
+  "name": "KukiPets",
+  "image": "https://www.kukipetsbo.com/img/logo.webp",
+  "description": pageDescription,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Santa Cruz",
+    "addressLocality": "Santa Cruz de la Sierra",
+    "addressRegion": "Santa Cruz",
+    "addressCountry": "BO"
+  },
+  "telephone": "+591 77970901",
+  "url": "https://www.kukipetsbo.com",
+  "sameAs": [
+    "https://www.facebook.com/kukipetsbo",
+    "https://www.instagram.com/kukipetsbo",
+    "https://g.page/kukipetsbo"
+  ],
+  "priceRange": "$$",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "opens": "09:00",
+    "closes": "19:00"
+  }
+};
 ---
-
-<BaseLayout>
+<BaseLayout title={pageTitle} description={pageDescription} keywords={keywords}>
+  <script type="application/ld+json">
+    {JSON.stringify(businessData)}
+  </script>
   <section class="py-12 container mx-auto px-4">
-    <h1 class="text-3xl md:text-4xl font-bold mb-6 text-orange-600 text-4xl font-bold text-center mb-12 bg-orange-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">Tu Carrito</h1>
+    <h1 class="text-3xl font-bold mb-6 text-center bg-orange-500 text-white py-3 px-6 rounded-lg">
+      Carrito de Compras | KukiPets Santa Cruz
+    </h1>
 
-    <!-- Contenedor del carrito -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <p class="text-center text-lg mb-8 text-gray-700 max-w-3xl mx-auto bg-orange-500 text-white py-3 px-6 rounded-lg">
+      Completa tu pedido de productos para mascotas en KukiPets. 
+      Envíos rápidos en Santa Cruz, Bolivia. ¿Necesitas ayuda? Llámanos al +591 77970901
+    </p>
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Lista de productos -->
       <div class="lg:col-span-2">
-        <div id="cartList" class="space-y-4" data-items={JSON.stringify(cartItems ?? [])}>
-          {cartItems?.length > 0 ? (
-            cartItems.map((item) => (
-              <div class="p-4 border border-blue-100 bg-white rounded-lg grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-4">
-                <!-- Nombre y precio unitario -->
-                <div class="sm:col-span-6">
-                  <div class="font-semibold text-blue-900 leading-snug break-words text-base md:text-lg">
-                    {item.productos.nombre}
-                  </div>
-                  <div class="text-sm text-blue-700">
-                    {new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(item.productos.precio)} c/u
-                  </div>
-                </div>
-
-                <!-- Controles de cantidad -->
-                <div class="sm:col-span-3 flex items-center gap-2">
-                  <button 
-                    aria-label="Disminuir cantidad" 
-                    class="qty-dec w-10 h-10 rounded bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-sm"
-                    data-id={item.id}
-                    data-qty={item.cantidad - 1}
-                  >-</button>
-                  <span class="min-w-[2.75rem] text-center font-medium">{item.cantidad}</span>
-                  <button 
-                    aria-label="Aumentar cantidad" 
-                    class="qty-inc w-10 h-10 rounded bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-sm"
-                    data-id={item.id}
-                    data-qty={item.cantidad + 1}
-                  >+</button>
-                </div>
-
-                <!-- Total por línea -->
-                <div class="sm:col-span-2 flex sm:block items-center justify-between">
-                  <span class="text-blue-700 text-sm sm:hidden">Subtotal</span>
-                  <span class="font-semibold text-blue-900">
-                    {new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(item.productos.precio * item.cantidad)}
-                  </span>
-                </div>
-
-                <!-- Eliminar -->
-                <div class="sm:col-span-1 flex sm:block items-center sm:items-start justify-end">
-                  <button 
-                    class="rm-item px-3 py-2 text-red-600 hover:text-red-700 hover:underline text-sm"
-                    data-id={item.id}
-                  >Eliminar</button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div class="p-6 rounded-lg border border-blue-100 bg-blue-50 text-blue-900">
-              Tu carrito está vacío. Ve a <a href="/productos" class="underline font-semibold">Productos</a> para añadir items.
-            </div>
-          )}
+        <div id="emptyCart" class="text-center py-12 text-gray-600" style="display: none;">
+          <p class="text-xl mb-4 bg-orange-500 text-white py-3 px-6 rounded-lg">Tu carrito está vacío</p>
+          <a href="/productos" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded transition-colors">
+            Ver productos
+          </a>
+        </div>
+        
+        <div id="cartList" class="space-y-4">
+          <!-- Los productos se cargarán aquí dinámicamente -->
         </div>
       </div>
 
-      <!-- Resumen -->
+      <!-- Resumen lateral -->
       <aside class="lg:col-span-1">
-        <div class="p-6 rounded-lg border border-blue-100 bg-blue-50 text-blue-900">
+        <div class="p-6 rounded-lg border border-blue-100 bg-blue-50 text-blue-900 sticky top-4">
           <h2 class="font-bold mb-3">Resumen</h2>
           <div class="flex items-center justify-between text-sm mb-1">
             <span>Productos</span>
-            <span id="summaryCount">
-              {cartItems?.reduce((total, item) => total + item.cantidad, 0) || 0}
-            </span>
+            <span id="summaryCount">0</span>
           </div>
           <div class="flex items-center justify-between text-base font-semibold">
             <span>Total</span>
-            <span id="summaryTotal">
-              {new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(
-                cartItems?.reduce((total, item) => total + (item.productos.precio * item.cantidad), 0) || 0
-              )}
-            </span>
+            <span id="summaryTotal">Bs 0.00</span>
           </div>
-          <button 
-            id="clearCart" 
+          <button
+            id="clearCart"
             class="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded transition-colors text-sm"
           >Vaciar carrito</button>
         </div>
 
-        <div class="mt-4 p-6 rounded-lg border border-green-100 bg-green-50 text-green-900 text-4xl font-bold text-center mb-12 bg-orange-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-          <h3 class="font-bold mb-3">Finalizar Pedido</h3>
-          <p class="text-sm mb-3">Revisaremos tu pedido y nos pondremos en contacto.</p>
+        <div class="mt-4 p-6 rounded-lg border border-green-100 bg-green-50 text-green-900">
+          <h3 class="font-bold mb-4">Finalizar Pedido</h3>
+          
+          <!-- Formulario de datos del cliente -->
+          <div class="space-y-4 mb-4">
+            <div>
+              <label for="customerName" class="block text-sm font-medium text-green-800 mb-1">
+                Nombre completo *
+              </label>
+              <input 
+                type="text" 
+                id="customerName" 
+                required
+                class="w-full px-3 py-2 border border-green-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-900"
+                placeholder="Tu nombre completo"
+              />
+            </div>
+            
+            <div>
+              <label for="customerAddress" class="block text-sm font-medium text-green-800 mb-1">
+                Dirección de entrega *
+              </label>
+              <textarea 
+                id="customerAddress" 
+                required
+                rows="2"
+                class="w-full px-3 py-2 border border-green-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-900"
+                placeholder="Dirección completa para la entrega"
+              ></textarea>
+            </div>
+            
+            <div>
+              <label for="customerPhone" class="block text-sm font-medium text-green-800 mb-1">
+                Número de celular *
+              </label>
+              <input 
+                type="tel" 
+                id="customerPhone" 
+                required
+                class="w-full px-3 py-2 border border-green-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-900"
+                placeholder="Ej: 70123456"
+              />
+            </div>
+            
+            <div>
+              <label for="customerMessage" class="block text-sm font-medium text-green-800 mb-1">
+                Mensaje adicional (opcional)
+              </label>
+              <textarea 
+                id="customerMessage" 
+                rows="2"
+                class="w-full px-3 py-2 border border-green-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-900"
+                placeholder="Instrucciones especiales, horario de entrega, etc."
+              ></textarea>
+            </div>
+          </div>
+          
+          <p class="text-sm mb-3 text-green-700">
+            * Campos obligatorios. Revisaremos tu pedido y nos pondremos en contacto.
+          </p>
+          
           <button 
             id="sendWA" 
-            class="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-semibold py-2 px-4 rounded transition-colors"
-          >Enviar pedido por WhatsApp</button>
+            class="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-semibold py-3 px-4 rounded transition-colors"
+          >📱 Enviar pedido por WhatsApp</button>
         </div>
       </aside>
     </div>
   </section>
 
   <script>
-    // Tipos y helpers
-    const WA_NUMBER = '59177970901';
-    const formatCurrency = (n) => {
-      try { 
-        return new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(n); 
-      } catch { 
-        return `${n.toFixed(2)} BOB`; 
-      }
-    };
+    const WA_NUMBER = "59177970901";
 
-    // Funciones para manejar el carrito
-    async function updateQuantity(itemId, newQuantity) {
-      if (newQuantity < 1) return;
-      
-      const response = await fetch('/api/update-cart-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          itemId,
-          quantity: newQuantity
-        })
-      });
-      
-      if (response.ok) {
-        window.location.reload();
-      }
-    }
-
-    async function removeItem(itemId) {
-      const response = await fetch('/api/remove-cart-item', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ itemId })
-      });
-      
-      if (response.ok) {
-        window.location.reload();
-      }
-    }
-
-    async function clearAllItems() {
-      const response = await fetch('/api/clear-cart', {
-        method: 'POST'
-      });
-      
-      if (response.ok) {
-        // Mantener sincronía con el header (que usa localStorage)
-        try { 
-          localStorage.setItem('kukipets_cart', '[]');
-          window.dispatchEvent(new Event('kukipets:cart-updated'));
-        } catch {}
-        window.location.reload();
-      }
-    }
-
-    // Event listeners
-    document.addEventListener('DOMContentLoaded', () => {
-      // Sincroniza localStorage con lo que trae Supabase al entrar al carrito
+    // Obtener carrito del localStorage
+    function getCart() {
       try {
-        const listEl = document.getElementById('cartList') as HTMLElement | null;
-        const raw = (listEl?.dataset.items as string | undefined) ?? '[]';
-        const items = JSON.parse(raw) as Array<any>;
-        const ls = items.map(it => ({
-          name: it?.productos?.nombre ?? 'Producto',
-          price: Number(it?.productos?.precio ?? 0),
-          qty: Number(it?.cantidad ?? 1)
-        }));
-        localStorage.setItem('kukipets_cart', JSON.stringify(ls));
-        window.dispatchEvent(new Event('kukipets:cart-updated'));
-      } catch {}
+        const cart = localStorage.getItem('kukipets_cart');
+        return cart ? JSON.parse(cart) : [];
+      } catch {
+        return [];
+      }
+    }
 
-      // Botones de cantidad
-      document.querySelectorAll('.qty-inc').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const el = e.currentTarget as HTMLElement;
-          const itemId = el.getAttribute('data-id');
-          const newQty = parseInt(el.getAttribute('data-qty') || '0');
-          updateQuantity(itemId, newQty);
-        });
-      });
+    // Guardar carrito en localStorage
+    function saveCart(cart) {
+      localStorage.setItem('kukipets_cart', JSON.stringify(cart));
+      window.dispatchEvent(new Event('kukipets:cart-updated'));
+    }
 
-      document.querySelectorAll('.qty-dec').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const el = e.currentTarget as HTMLElement;
-          const itemId = el.getAttribute('data-id');
-          const newQty = parseInt(el.getAttribute('data-qty') || '0');
-          updateQuantity(itemId, newQty);
-        });
-      });
+    // Formatear moneda
+    function formatCurrency(amount) {
+      return `Bs ${amount.toFixed(2)}`;
+    }
 
-      // Botones de eliminar
-      document.querySelectorAll('.rm-item').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const el = e.currentTarget as HTMLElement;
-          const itemId = el.getAttribute('data-id');
-          if (confirm('¿Estás seguro de eliminar este producto del carrito?')) {
-            removeItem(itemId);
-          }
-        });
-      });
+    // Renderizar carrito
+    function renderCart() {
+      const cart = getCart();
+      const cartList = document.getElementById('cartList');
+      const emptyCart = document.getElementById('emptyCart');
 
-      // Vaciar carrito
-      document.getElementById('clearCart')?.addEventListener('click', () => {
-        if (confirm('¿Estás seguro de vaciar todo el carrito?')) {
-          clearAllItems();
-        }
-      });
+      if (cart.length === 0) {
+        emptyCart.style.display = 'block';
+        cartList.innerHTML = '';
+        updateSummary([]);
+        return;
+      }
 
-      // Enviar por WhatsApp
-      document.getElementById('sendWA')?.addEventListener('click', () => {
-        const listEl = document.getElementById('cartList') as HTMLElement | null;
-        const raw = (listEl?.dataset.items as string | undefined) ?? '[]';
-        const cartItems = JSON.parse(raw);
-        if (!cartItems.length) {
-          alert('Tu carrito está vacío.');
-          return;
-        }
-        
-        const detail = 'Mi pedido:\n' + 
-          cartItems.map(it => 
-            `- ${it.productos.nombre} x${it.cantidad} — ${formatCurrency(it.productos.precio)} c/u = ${formatCurrency(it.productos.precio * it.cantidad)}`
-          ).join('\n') + 
-          `\nTotal: ${formatCurrency(cartItems.reduce((s, it) => s + it.productos.precio * it.cantidad, 0))}`;
-        
-        const msg = encodeURIComponent(`${detail}\n\nHola Kukipets, me gustaría realizar este pedido.`);
-        window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
-      });
+      emptyCart.style.display = 'none';
+      
+      cartList.innerHTML = cart.map(item => `
+        <div class="p-4 border border-blue-100 bg-white rounded-lg grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-4">
+          <div class="sm:col-span-6">
+            <div class="font-semibold text-blue-900 text-base md:text-lg">
+              ${item.name}
+            </div>
+            <div class="text-sm text-blue-700">
+              ${formatCurrency(item.price)} c/u
+            </div>
+          </div>
+
+          <div class="sm:col-span-3 flex items-center gap-2">
+            <button class="qty-btn w-10 h-10 rounded bg-gray-100 hover:bg-gray-200 text-sm" 
+                    onclick="changeQuantity(${item.productId}, ${item.qty - 1})">-</button>
+            <span class="min-w-[2.75rem] text-center font-medium">${item.qty}</span>
+            <button class="qty-btn w-10 h-10 rounded bg-gray-100 hover:bg-gray-200 text-sm"
+                    onclick="changeQuantity(${item.productId}, ${item.qty + 1})">+</button>
+          </div>
+
+          <div class="sm:col-span-2 flex sm:block items-center justify-between">
+            <span class="text-blue-700 text-sm sm:hidden">Subtotal</span>
+            <span class="font-semibold text-blue-900">
+              ${formatCurrency(item.price * item.qty)}
+            </span>
+          </div>
+
+          <div class="sm:col-span-1 flex sm:block items-center sm:items-start justify-end">
+            <button class="text-red-600 hover:text-red-700 hover:underline text-sm"
+                    onclick="removeItem(${item.productId})">Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+
+      updateSummary(cart);
+    }
+
+    // Actualizar resumen
+    function updateSummary(cart) {
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      
+      document.getElementById('summaryCount').textContent = totalItems;
+      document.getElementById('summaryTotal').textContent = formatCurrency(totalPrice);
+    }
+
+    // Cambiar cantidad
+    function changeQuantity(productId, newQty) {
+      if (newQty < 1) return;
+      
+      const cart = getCart();
+      const item = cart.find(item => item.productId === productId);
+      if (item) {
+        item.qty = newQty;
+        saveCart(cart);
+        renderCart();
+      }
+    }
+
+    // Eliminar item
+    function removeItem(productId) {
+      if (confirm('¿Estás seguro de eliminar este producto del carrito?')) {
+        const cart = getCart();
+        const filteredCart = cart.filter(item => item.productId !== productId);
+        saveCart(filteredCart);
+        renderCart();
+      }
+    }
+
+    // Vaciar carrito
+    function clearCart() {
+      if (confirm('¿Estás seguro de vaciar todo el carrito?')) {
+        saveCart([]);
+        renderCart();
+      }
+    }
+
+    // Enviar por WhatsApp
+    function sendOrder() {
+      const cart = getCart();
+      if (cart.length === 0) {
+        alert('Tu carrito está vacío.');
+        return;
+      }
+
+      const name = document.getElementById('customerName').value.trim();
+      const address = document.getElementById('customerAddress').value.trim();
+      const phone = document.getElementById('customerPhone').value.trim();
+      const message = document.getElementById('customerMessage').value.trim();
+
+      if (!name || !address || !phone) {
+        alert('Por favor, completa todos los campos obligatorios.');
+        return;
+      }
+
+      const orderDetails = cart.map(item => 
+        `• ${item.name} x${item.qty} — ${formatCurrency(item.price)} c/u = ${formatCurrency(item.price * item.qty)}`
+      ).join('\n');
+
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+      let whatsappMessage = `🐾 *NUEVO PEDIDO - KUKIMASCOTAS* 🐾\n\n`;
+      whatsappMessage += `👤 *DATOS DEL CLIENTE:*\n`;
+      whatsappMessage += `• Nombre: ${name}\n`;
+      whatsappMessage += `• Celular: ${phone}\n`;
+      whatsappMessage += `• Dirección: ${address}\n\n`;
+      whatsappMessage += `🛒 *DETALLES DEL PEDIDO:*\n${orderDetails}\n\n`;
+      whatsappMessage += `💰 *TOTAL: ${formatCurrency(total)}*\n\n`;
+      
+      if (message) {
+        whatsappMessage += `📝 *MENSAJE ADICIONAL:*\n${message}\n\n`;
+      }
+      
+      whatsappMessage += `¡Hola! Me gustaría realizar este pedido. ¿Podrían confirmar disponibilidad y tiempo de entrega? ¡Gracias! 😊`;
+
+      const encodedMessage = encodeURIComponent(whatsappMessage);
+      window.open(`https://wa.me/${WA_NUMBER}?text=${encodedMessage}`, '_blank');
+
+      // Limpiar formulario
+      document.getElementById('customerName').value = '';
+      document.getElementById('customerAddress').value = '';
+      document.getElementById('customerPhone').value = '';
+      document.getElementById('customerMessage').value = '';
+    }
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCart();
+      
+      document.getElementById('clearCart').addEventListener('click', clearCart);
+      document.getElementById('sendWA').addEventListener('click', sendOrder);
+      
+      // Escuchar actualizaciones del carrito
+      window.addEventListener('kukipets:cart-updated', renderCart);
     });
+
+    // Hacer funciones globales para onclick
+    window.changeQuantity = changeQuantity;
+    window.removeItem = removeItem;
   </script>
 </BaseLayout>

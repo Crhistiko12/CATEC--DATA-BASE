@@ -1,7 +1,49 @@
 ---
 const Protada_Productos = "/img/banner/BANNER-productos.webp";
-import { Image } from 'astro:assets';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// SEO Metadata
+const pageTitle = "Productos para Mascotas en Santa Cruz | KukiPets";
+const pageDescription = "Encuentra los mejores alimentos y accesorios para tu mascota en KukiPets. Tienda especializada en Santa Cruz, Bolivia. Envíos a domicilio. ¡Calidad garantizada!";
+const keywords = "productos para mascotas, alimentos para perros, alimentos para gatos, accesorios mascotas, tienda mascotas Santa Cruz, KukiPets Bolivia";
+
+// Datos NAP para JSON-LD
+const businessData = {
+  "@context": "https://schema.org",
+  "@type": "PetStore",
+  "name": "KukiPets",
+  "image": "https://www.kukipetsbo.com/img/logo.webp",
+  "description": pageDescription,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Santa Cruz",
+    "addressLocality": "Santa Cruz de la Sierra",
+    "addressRegion": "Santa Cruz",
+    "addressCountry": "BO"
+  },
+  "telephone": "+591 77970901",
+  "url": "https://www.kukipetsbo.com",
+  "sameAs": [
+    "https://www.facebook.com/kukipetsbo",
+    "https://www.instagram.com/kukipetsbo",
+    "https://g.page/kukipetsbo"
+  ],
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "opens": "09:00",
+    "closes": "19:00"
+  }
+};
+
 // Imágenes
 import Imagen_1 from "../assets/img/productos/1.jpg";
 import Imagen_2 from "../assets/img/productos/3.jpg";
@@ -11,16 +53,16 @@ import Imagen_5 from "../assets/img/productos/8.jpg";
 import Imagen_6 from "../assets/img/productos/11.jpg";
 import Imagen_7 from "../assets/img/productos/12.jpg";
 import Imagen_8 from "../assets/img/productos/13.jpg";
-import Imagen_9 from "../assets/img/productos/14.jpg"
+import Imagen_9 from "../assets/img/productos/14.jpg";
 import Imagen_11 from "../assets/img/productos/18.jpg";
 import Imagen_12 from "../assets/img/productos/21.jpg";
 import Imagen_13 from "../assets/img/productos/22.jpg";
 import Imagen_14 from "../assets/img/productos/23.jpg";
 
 // Supabase: usa el cliente oficial
-import { supabase } from '../lib/supabase';
+import { supabase } from "../lib/supabase.js";
 
-let productos: any[] = [];
+let productos = [];
 
 // Arreglo de imágenes para usar en las tarjetas, en el mismo orden visual
 const productImages = [
@@ -40,337 +82,534 @@ const productImages = [
 ];
 try {
   const { data, error } = await supabase
-    .from('kukipets-productos')
-    .select('*')
-    .order('id', { ascending: true });
+    .from("kukipets-productos")
+    .select("*")
+    .order("id", { ascending: true });
   if (error) {
-    console.error('Error Supabase productos:', error);
+    console.error("Error Supabase productos:", error);
   } else {
     productos = Array.isArray(data) ? data : [];
   }
 } catch (err) {
-  console.error('Excepción al obtener productos de Supabase:', err);
+  console.error("Excepción al obtener productos de Supabase:", err);
 }
 // Helper para mostrar moneda en la UI
-const formatBOB = (n: number | string) => {
-  const num = typeof n === 'string' ? parseFloat(n) : (n ?? 0);
-  try { return new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(num || 0); }
-  catch { return `${(num || 0).toFixed(2)} BOB`; }
+const formatBOB = (n) => {
+  const num = typeof n === "string" ? parseFloat(n) : (n ?? 0);
+  try {
+    return new Intl.NumberFormat("es-BO", {
+      style: "currency",
+      currency: "BOB",
+    }).format(num || 0);
+  } catch {
+    return `${(num || 0).toFixed(2)} BOB`;
+  }
 };
 ---
-<BaseLayout>
 
-     <section id="inicio" class="relative !p-0 overflow-hidden">
+<BaseLayout title={pageTitle} description={pageDescription} keywords={keywords}>
+  <script type="application/ld+json">
+    {JSON.stringify(businessData)}
+  </script>
+  <section id="inicio" class="relative !p-0 overflow-hidden">
     <!-- Usa el componente Image de Astro para optimización -->
-    <Image 
-      src= {Protada_Productos} 
-      alt="Perro feliz comiendo alimento KukiPets" 
+    <Image
+      src={Protada_Productos}
+      alt="Perro feliz comiendo alimento KukiPets"
       width="896"
       height="700"
       class="h-full w-full object-cover rounded-[40px] !my-0 !mx-auto shadow-md block"
       loading="eager"
-      
     />
-  
   </section>
 
+  <section class="py-16 container mx-auto px-4">
+    <h1
+      class="text-4xl font-bold text-center mb-12 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+    >
+      Productos para Mascotas en Santa Cruz | KukiPets
+    </h1>
 
-    <section class="py-16 container mx-auto px-4">
-        <h1 class="text-4xl font-bold text-center mb-12 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">Nuestros Productos</h1>
-        
-        <!-- Resumen simple del carrito -->
-        <div id="cartBox" class="max-w-3xl mx-auto mb-8 p-4 border border-blue-100 rounded-lg bg-blue-50 text-blue-900">
-          <div class="flex items-center justify-between">
-            <h2 class="font-bold">Carrito</h2>
-            <div class="text-sm">Productos: <span id="cartCount">0</span> · Total: <span id="cartTotal">0</span></div>
-          </div>
-          <div id="cartItems" class="mt-2 text-sm space-y-1"></div>
+    <p class="text-center text-lg mb-8 text-white max-w-3xl mx-auto bg-orange-500 py-3 px-6 rounded-lg">
+      {pageDescription}
+    </p>
+
+    <!-- Resumen simple del carrito -->
+    <div
+      id="cartBox"
+      class="max-w-3xl mx-auto mb-8 p-4 border border-blue-100 rounded-lg bg-blue-50 text-blue-900"
+    >
+      <div class="flex items-center justify-between">
+        <h2 class="font-bold">Carrito</h2>
+        <div class="text-sm">
+          Productos: <span id="cartCount">0</span> · Total: <span id="cartTotal"
+            >0</span
+          >
         </div>
-        
-        <!-- Buscador y ordenamiento -->
-        <div class="max-w-5xl mx-auto mb-6 px-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div class="sm:col-span-2">
-            <label for="productSearch" class="sr-only">Buscar productos</label>
-            <input id="productSearch" type="text" placeholder="Buscar por nombre o descripción..."
-                   class="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400" />
-          </div>
-          <div>
-            <label for="sortSelect" class="sr-only">Ordenar</label>
-            <select id="sortSelect" class="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400">
-              <option value="name-asc">A-Z</option>
-              <option value="name-desc">Z-A</option>
-              <option value="price-asc">Precio: menor a mayor</option>
-              <option value="price-desc">Precio: mayor a menor</option>
-            </select>
-          </div>
-        </div>
-        
-        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
-          {Array.isArray(productos) && productos.length > 0 ? (
-            productos.map((p, i) => (
-              <div class="js-product-card border border-blue-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-blue-50"
-                   data-name={(p.nombre ?? p.Nombre ?? 'Producto').toString().toLowerCase()}
-                   data-desc={(p.descripcion ?? p.Descripcion ?? '').toString().toLowerCase()}
-                   data-price={Number(p.precio ?? p.Precio ?? 0).toString()}>
-                <Image 
-                  src={productImages[i % productImages.length]}
-                  alt={p.nombre ?? p.Nombre ?? 'Producto'} 
-                  class="w-full h-52 object-cover"
-                />
-                <div class="p-5">
-                  <h3 class="text-lg font-bold mb-2 text-blue-800">{p.nombre ?? p.Nombre ?? 'Producto'}</h3>
-                  <p class="text-blue-700 mb-3 text-sm">{p.descripcion ?? p.Descripcion ?? 'Sin descripción'}</p>
-                  <p class="text-orange-500 font-bold text-xl">{formatBOB(p.precio ?? p.Precio ?? 0)}</p>
-                  <button class="js-add-to-cart mt-3 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-full w-full transition-colors text-sm" data-id={(p.id ?? p.ID ?? '').toString()} data-name={p.nombre ?? p.Nombre ?? 'Producto'} data-price={(p.precio ?? p.Precio ?? 0).toString()} aria-label="Añadir al carrito">
-                    Añadir al Carrito
-                  </button>
-                </div>
+      </div>
+      <div id="cartItems" class="mt-2 text-sm space-y-1"></div>
+      <!-- Datos de cliente y envío -->
+      
+      </div>
+    </div>
+
+    <!-- Buscador y ordenamiento -->
+    <div
+      class="max-w-5xl mx-auto mb-6 px-4 grid grid-cols-1 sm:grid-cols-3 gap-3"
+    >
+      <div class="sm:col-span-2">
+        <label for="productSearch" class="sr-only">Buscar productos</label>
+        <input
+          id="productSearch"
+          type="text"
+          placeholder="Buscar por nombre o descripción..."
+          class="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+        />
+      </div>
+      <div>
+        <label for="sortSelect" class="sr-only">Ordenar</label>
+        <select
+          id="sortSelect"
+          class="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+        >
+          <option value="name-asc">A-Z</option>
+          <option value="name-desc">Z-A</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+        </select>
+      </div>
+    </div>
+
+    <div
+      id="productsGrid"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4"
+    >
+      {
+        Array.isArray(productos) && productos.length > 0 ? (
+          productos.map((p, i) => (
+            <div
+              class="js-product-card border border-blue-100 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-blue-50"
+              data-name={(p.nombre ?? p.Nombre ?? "Producto")
+                .toString()
+                .toLowerCase()}
+              data-desc={(p.descripcion ?? p.Descripcion ?? "")
+                .toString()
+                .toLowerCase()}
+              data-price={Number(p.precio ?? p.Precio ?? 0).toString()}
+            >
+              <Image
+                src={productImages[i % productImages.length]}
+                alt={`${p.nombre ?? p.Nombre ?? "Producto"} - KukiPets Santa Cruz`}
+                class="w-full h-52 object-cover"
+              />
+              <div class="p-5">
+                <h3 class="text-lg font-bold mb-2 text-blue-800">
+                  {p.nombre ?? p.Nombre ?? "Producto"}
+                </h3>
+                <p class="text-blue-700 mb-3 text-sm">
+                  {p.descripcion ?? p.Descripcion ?? "Sin descripción"}
+                </p>
+                <p class="text-orange-500 font-bold text-xl">
+                  {formatBOB(p.precio ?? p.Precio ?? 0)}
+                </p>
+                <button
+                  class="js-add-to-cart mt-3 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-full w-full transition-colors text-sm"
+                  data-id={(p.id ?? p.ID ?? "").toString()}
+                  data-name={p.nombre ?? p.Nombre ?? "Producto"}
+                  data-price={(p.precio ?? p.Precio ?? 0).toString()}
+                >
+                  Añadir al Carrito
+                </button>
               </div>
-            ))
-          ) : (
-            <div class="col-span-1 sm:col-span-2 lg:col-span-4 text-center text-blue-800">
-              No hay productos disponibles.
             </div>
-          )}
-        </div>
-
-
-  <!-- Contacto - Formulario accesible -->
-   <br><br>
-<div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-  <div class="text-center mb-6">
-    <h2 class="text-2xl font-bold text-[#128C7E] mb-2">Contáctanos</h2>
-    <p class="text-gray-600">¿Te gustaria algo para tu peludito ? Escríbenos y te responderemos por WhatsApp.</p>
-  </div>
-
-  <form id="kukipetsContactForm" class="space-y-4">
-    <!-- Nombre -->
-    <div>
-      <label for="name" class="block font-semibold text-[#128C7E] mb-1 after:content-['_*'] after:text-red-500">Nombre</label>
-      <input type="text" id="name" required placeholder="Tu nombre completo" 
-             class="w-full p-3 border-2 border-gray-200 rounded focus:border-[#25D366] focus:outline-none">
-    </div>
-
-    <!-- Celular -->
-    <div>
-      <label for="phone" class="block font-semibold text-[#128C7E] mb-1 after:content-['_*'] after:text-red-500">Número de celular</label>
-      <input type="tel" id="phone" required placeholder="Ej. +51 987654321" 
-             class="w-full p-3 border-2 border-gray-200 rounded focus:border-[#25D366] focus:outline-none">
-    </div>
-
-    <!-- Email (opcional) -->
-    <div>
-      <label for="email" class="block font-semibold text-[#128C7E] mb-1">Correo electrónico</label>
-      <input type="email" id="email" placeholder="tu@email.com (opcional)" 
-             class="w-full p-3 border-2 border-gray-200 rounded focus:border-[#25D366] focus:outline-none">
-      <p class="text-sm text-gray-400 italic">Este campo es opcional OJO</p>
-    </div>
-
-    <!-- Mensaje -->
-    <div>
-      <label for="message" class="block font-semibold text-[#128C7E] mb-1 after:content-['_*'] after:text-red-500">Mensaje</label>
-      <textarea id="message" required placeholder="¿En qué podemos ayudarte?" rows="4"
-                class="w-full p-3 border-2 border-gray-200 rounded focus:border-[#25D366] focus:outline-none"></textarea>
-    </div>
-
-    <!-- Botón de enviar -->
-    <button type="submit" 
-            class="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-semibold py-3 px-4 rounded transition-colors">
-      <svg class="inline mr-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white">
-        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-      </svg>
-      Enviar mensaje por WhatsApp
-    </button>
-  </form>
-</div>
-
-<script>
-  // Esperar a que el DOM esté completamente cargado
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('kukipetsContactForm') as HTMLFormElement | null;
-    const searchInput = document.getElementById('productSearch') as HTMLInputElement | null;
-    const sortSelect = document.getElementById('sortSelect') as HTMLSelectElement | null;
-    // Estado simple del carrito en memoria
-    type CartItem = { name: string; price: number; qty: number };
-    let cart: CartItem[] = [];
-
-    // Elementos del resumen
-    const cartCountEl = document.getElementById('cartCount');
-    const cartTotalEl = document.getElementById('cartTotal');
-    const cartItemsEl = document.getElementById('cartItems');
-
-    const formatCurrency = (n: number) => {
-      try {
-        return new Intl.NumberFormat('es-BO', { style: 'currency', currency: 'BOB' }).format(n);
-      } catch { return `${n.toFixed(2)} BOB`; }
-    };
-
-    // Helpers de almacenamiento
-    const readCart = (): CartItem[] => {
-      try { return JSON.parse(localStorage.getItem('kukipets_cart') || '[]'); } catch { return []; }
-    };
-    const saveCart = () => {
-      try { localStorage.setItem('kukipets_cart', JSON.stringify(cart)); } catch {}
-      // Notificar a otras vistas (header, carrito)
-      window.dispatchEvent(new Event('kukipets:cart-updated'));
-    };
-
-    const renderCart = () => {
-      const total = cart.reduce((sum, it) => sum + it.price * it.qty, 0);
-      const count = cart.reduce((sum, it) => sum + it.qty, 0);
-      if (cartCountEl) cartCountEl.textContent = String(count);
-      if (cartTotalEl) cartTotalEl.textContent = formatCurrency(total);
-      if (cartItemsEl) {
-        if (!cart.length) {
-          cartItemsEl.innerHTML = '<span class="text-blue-700">Tu carrito está vacío.</span>';
-        } else {
-          cartItemsEl.innerHTML = cart
-            .map(it => `<div class="flex items-center justify-between"><span>• ${it.name} x${it.qty}</span><span>${formatCurrency(it.price * it.qty)}</span></div>`) 
-            .join('');
-        }
+          ))
+        ) : (
+          <div class="col-span-1 sm:col-span-2 lg:col-span-4 text-center text-blue-800">
+            No hay productos disponibles.
+          </div>
+        )
       }
-      saveCart();
-    };
+    </div>
 
-    // Filtro de productos por búsqueda
-    const attachSearch = () => {
-      if (!searchInput) return;
-      const cards = document.querySelectorAll('.js-product-card') as NodeListOf<HTMLElement>;
-      let t: number | null = null;
-      const apply = () => {
-        const q = searchInput.value.trim().toLowerCase();
-        cards.forEach(card => {
-          if (!q) { card.classList.remove('hidden'); return; }
-          const name = card.getAttribute('data-name') || '';
-          const desc = card.getAttribute('data-desc') || '';
-          const match = name.includes(q) || desc.includes(q);
-          card.classList.toggle('hidden', !match);
-        });
-      };
-      searchInput.addEventListener('input', () => {
-        if (t) window.clearTimeout(t);
-        t = window.setTimeout(apply, 150);
-      });
-    };
 
-    // Ordenamiento client-side
-    const attachSort = () => {
-      if (!sortSelect) return;
-      const grid = document.getElementById('productsGrid');
-      if (!grid) return;
-      const getCards = () => Array.from(grid.querySelectorAll('.js-product-card')) as HTMLElement[];
-      const sorter = (key: string) => {
-        const cards = getCards();
-        cards.sort((a, b) => {
-          const an = (a.getAttribute('data-name') || '').toString();
-          const bn = (b.getAttribute('data-name') || '').toString();
-          const ap = parseFloat(a.getAttribute('data-price') || '0');
-          const bp = parseFloat(b.getAttribute('data-price') || '0');
-          switch (key) {
-            case 'name-asc': return an.localeCompare(bn);
-            case 'name-desc': return bn.localeCompare(an);
-            case 'price-asc': return ap - bp;
-            case 'price-desc': return bp - ap;
-            default: return 0;
-          }
-        });
-        // Reordenar en el DOM
-        cards.forEach(c => grid.appendChild(c));
-      };
-      sorter(sortSelect.value);
-      sortSelect.addEventListener('change', () => sorter(sortSelect.value));
-    };
-
-    // Listeners de botones "Añadir al Carrito"
-    const addButtons = document.querySelectorAll('.js-add-to-cart') as NodeListOf<HTMLButtonElement>;
-    addButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const name = btn.getAttribute('data-name') || 'Producto';
-        const priceStr = btn.getAttribute('data-price') || '0';
-        const price = parseFloat(priceStr);
-        const productIdStr = btn.getAttribute('data-id') || '';
-        const productId = parseInt(productIdStr);
-        const found = cart.find(i => i.name === name && i.price === price);
-        if (found) found.qty += 1; else cart.push({ name, price, qty: 1 });
-        renderCart();
-
-        // Además, persistimos en el backend (Supabase)
-        // Nota: Usa el mismo userId temporal que carrito.astro
-        const userId = 'usuario-temporal';
-        if (!Number.isNaN(productId)) {
-          fetch('/api/add-cart-item', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, productId, quantity: 1 })
-          }).catch(() => {/* silencioso, UI ya se actualizó localmente */});
-        }
-      });
-    });
-    // Inicializa desde localStorage y muestra resumen
-    cart = readCart();
-    renderCart();
-    attachSearch();
-    attachSort();
-    
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Obtener elementos del formulario
-        const nameInput = document.getElementById('name') as HTMLInputElement | null;
-        const phoneInput = document.getElementById('phone') as HTMLInputElement | null;
-        const emailInput = document.getElementById('email') as HTMLInputElement | null;
-        const messageInput = document.getElementById('message') as HTMLTextAreaElement | null;
-        
-        // Validar que los elementos existan
-        if (!nameInput || !phoneInput || !messageInput) {
-          console.error('Elementos del formulario no encontrados');
-          return;
+    <script is:inline>
+      // ========= KUKIMASCOTAS - SCRIPT DE PRODUCTOS Y CARRITO =========
+      function setupKukiPets() {
+        // --- ACCESO A FUNCIONES GLOBALES ---
+        const showToast = window.showToast;
+        if (!showToast) {
+          console.error("La función showToast no está disponible.");
+          // Define una función de respaldo para evitar que todo se rompa.
+          window.showToast = (msg) => console.log(`Toast: ${msg}`);
         }
 
-        // Obtener valores
-        const name = nameInput.value.trim();
-        const phone = phoneInput.value.replace(/\D/g, '');
-        const email = emailInput ? emailInput.value.trim() : '';
-        const message = messageInput.value.trim();
-        
-        // Validación básica
-        if (!name || !phone || !message) {
-          alert('Por favor, completa todos los campos requeridos');
-          return;
-        }
+        // --- TIPOS (para JSDoc) ---
+        /**
+         * @typedef {object} CartItem
+         * @property {number} productId
+         * @property {string} name
+         * @property {number} price
+         * @property {number} qty
+         */
 
-        // Construir mensaje para WhatsApp
-        // Construir detalle del carrito
-        const cartDetail = cart.length
-          ? (
-              'Mi pedido:\n' +
-              cart.map(it => `- ${it.name} x${it.qty} — ${formatCurrency(it.price)} c/u = ${formatCurrency(it.price * it.qty)}`).join('\n') +
-              `\nTotal: ${formatCurrency(cart.reduce((s, it) => s + it.price * it.qty, 0))}\n\n`
-            )
-          : '';
+        // --- ESTADO Y VARIABLES GLOBALES ---
+        /** @type {CartItem[]} */
+        let cart = [];
+        /** @type {number[]} */
+        let selectedIds = [];
+        const WHATSAPP_NUMBER = "59175553535";
 
-        let whatsappMessage = encodeURIComponent(
-          `Hola Kukipets, mi nombre es ${name}.\n\n` +
-          cartDetail +
-          `Mi mensaje: ${message}\n\n` +
-          (email ? `Mi correo: ${email}\n\n` : '') +
-          `Por favor contáctenme a este número: ${phone}`
+        // --- ELEMENTOS DEL DOM ---
+        const getEl = (id) => document.getElementById(id);
+        const queryAll = (sel) => document.querySelectorAll(sel);
+
+        const btnCheckout = /** @type {HTMLButtonElement | null} */ (
+          getEl("btnCheckout")
         );
-        
-        // Abrir WhatsApp
-        try {
-          window.open(`https://wa.me/59177970901?text=${whatsappMessage}`, '_blank');
-          form.reset();
-        } catch (error) {
-          console.error('Error al abrir WhatsApp:', error);
-          alert('Hubo un error al intentar abrir WhatsApp. Por favor, inténtalo de nuevo.');
+        const cartBox = {
+          count: getEl("cartCount"),
+          total: getEl("cartTotal"),
+          items: getEl("cartItems"),
+        };
+        const customerForm = {
+          name: /** @type {HTMLInputElement | null} */ (getEl("custName")),
+          phone: /** @type {HTMLInputElement | null} */ (getEl("custPhone")),
+          email: /** @type {HTMLInputElement | null} */ (getEl("custEmail")),
+          address: /** @type {HTMLInputElement | null} */ (
+            getEl("shipAddress")
+          ),
+          city: /** @type {HTMLInputElement | null} */ (getEl("shipCity")),
+          notes: /** @type {HTMLInputElement | null} */ (getEl("shipNotes")),
+        };
+
+        // --- LÓGICA DE CARRITO Y ALMACENAMIENTO ---
+        const formatCurrency = (n) => {
+          const num = Number(n) || 0;
+          try {
+            return new Intl.NumberFormat("es-BO", {
+              style: "currency",
+              currency: "BOB",
+            }).format(num);
+          } catch {
+            return `${num.toFixed(2)} BOB`;
+          }
+        };
+
+        const loadStateFromStorage = () => {
+          try {
+            const storedCart = JSON.parse(
+              localStorage.getItem("kukipets_cart") || "[]"
+            );
+            cart = Array.isArray(storedCart) ? storedCart : [];
+          } catch {
+            cart = [];
+          }
+          try {
+            const storedSelection = JSON.parse(
+              localStorage.getItem("kukipets_cart_selected") || "[]"
+            );
+            selectedIds = Array.isArray(storedSelection) ? storedSelection : [];
+          } catch {
+            selectedIds = [];
+          }
+        };
+
+        const saveCart = () => {
+          try {
+            localStorage.setItem("kukipets_cart", JSON.stringify(cart));
+          } catch {}
+          window.dispatchEvent(new Event("kukipets:cart-updated"));
+        };
+
+        const saveSelection = () => {
+          try {
+            localStorage.setItem(
+              "kukipets_cart_selected",
+              JSON.stringify(selectedIds)
+            );
+          } catch {}
+        };
+
+        const clearAllClientData = () => {
+          cart = [];
+          selectedIds = [];
+          localStorage.removeItem("kukipets_cart");
+          localStorage.removeItem("kukipets_cart_selected");
+          Object.values(customerForm).forEach((input) => {
+            if (input) input.value = "";
+          });
+          if (contactForm.form) contactForm.form.reset();
+          window.dispatchEvent(new Event("kukipets:cart-updated"));
+        };
+
+        // --- RENDERIZADO Y UI ---
+        const renderCartSummary = () => {
+          if (
+            !cartBox.count ||
+            !cartBox.total ||
+            !cartBox.items
+          ) {
+            console.error('Elementos del carrito no encontrados:', {
+              count: !!cartBox.count,
+              total: !!cartBox.total,
+              items: !!cartBox.items
+            });
+            return;
+          }
+
+          const hasSelection = selectedIds.length > 0;
+          const itemsForTotals = hasSelection
+            ? cart.filter((item) => selectedIds.includes(item.productId))
+            : cart;
+          const total = itemsForTotals.reduce(
+            (sum, it) => sum + it.price * it.qty,
+            0
+          );
+          const count = itemsForTotals.reduce((sum, it) => sum + it.qty, 0);
+
+          cartBox.count.textContent = String(count);
+          cartBox.total.textContent = formatCurrency(total);
+
+          // Solo manejar btnCheckout si existe
+          if (btnCheckout) {
+            const hasItemsToProcess = itemsForTotals.length > 0;
+            btnCheckout.disabled = !hasItemsToProcess;
+            btnCheckout.classList.toggle("opacity-50", !hasItemsToProcess);
+            btnCheckout.classList.toggle(
+              "cursor-not-allowed",
+              !hasItemsToProcess
+            );
+          }
+
+          if (cart.length === 0) {
+            cartBox.items.innerHTML =
+              '<span class="text-blue-700">Tu carrito está vacío.</span>';
+            return;
+          }
+
+          cartBox.items.innerHTML = cart
+            .map((item) => {
+              const isChecked = hasSelection
+                ? selectedIds.includes(item.productId)
+                : true;
+              return `
+          <div class="flex items-center justify-between py-1">
+            <span class="flex items-center">
+              <input type="checkbox" class="cart-select mr-2 h-4 w-4 text-orange-500 border-gray-300 rounded focus:ring-orange-400" data-id="${item.productId}" ${isChecked ? "checked" : ""} />
+              <span>${item.name} x${item.qty}</span>
+            </span>
+            <span>${formatCurrency(item.price * item.qty)}</span>
+          </div>`;
+            })
+            .join("");
+
+          queryAll(".cart-select").forEach((el) => {
+            el.addEventListener("change", (e) => {
+              const checkbox = /** @type {HTMLInputElement} */ (e.target);
+              const id = Number(checkbox.dataset.id);
+              if (checkbox.checked) {
+                if (!selectedIds.includes(id)) selectedIds.push(id);
+              } else {
+                selectedIds = selectedIds.filter((sid) => sid !== id);
+              }
+              saveSelection();
+              renderCartSummary();
+            });
+          });
+        };
+
+        // --- LÓGICA DE NEGOCIO ---
+        const addToCart = (product) => {
+          const { name } = product;
+          const existing = cart.find(
+            (item) => item.productId === product.productId
+          );
+          if (existing) {
+            existing.qty++;
+          } else {
+            cart.push({ ...product, qty: 1 });
+          }
+          saveCart();
+          renderCartSummary(); // Actualizar el resumen inmediatamente
+          showToast(`${name} fue añadido al carrito.`, "success");
+        };
+
+        const handleWhatsAppCheckout = () => {
+          const customer = {
+            name: customerForm.name?.value.trim() || "",
+            phone: customerForm.phone?.value.trim() || "",
+            email: customerForm.email?.value.trim() || "",
+            address: customerForm.address?.value.trim() || "",
+            city: customerForm.city?.value.trim() || "",
+            notes: customerForm.notes?.value.trim() || "",
+          };
+
+          if (
+            !customer.name ||
+            !customer.phone ||
+            !customer.address ||
+            !customer.city
+          ) {
+            showToast("Por favor, completa los campos obligatorios.", "error");
+            return;
+          }
+
+          const hasSelection = selectedIds.length > 0;
+          const itemsToProcess = hasSelection
+            ? cart.filter((item) => selectedIds.includes(item.productId))
+            : cart;
+
+          if (itemsToProcess.length === 0) {
+            showToast("No hay productos seleccionados para enviar.", "error");
+            return;
+          }
+
+          const total = itemsToProcess.reduce(
+            (sum, item) => sum + item.price * item.qty,
+            0
+          );
+          const productLines = itemsToProcess
+            .map(
+              (item) =>
+                `- ${item.name} (x${item.qty}) - ${formatCurrency(item.price * item.qty)}`
+            )
+            .join("\n");
+
+          const message = `
+*¡Nuevo Pedido KukiMascotas!* 🐾
+
+*Cliente:* ${customer.name}
+*Teléfono:* ${customer.phone}
+${customer.email ? `*Email:* ${customer.email}\n` : ""}
+*Dirección de Envío:*
+${customer.address}, ${customer.city}
+${customer.notes ? `_Notas: ${customer.notes}_\n` : ""}
+*Detalles del Pedido:*
+${productLines}
+
+*TOTAL: ${formatCurrency(total)}*
+      `.trim();
+
+          const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+          try {
+            window.open(whatsappUrl, "_blank");
+            showToast("Preparando tu pedido para WhatsApp...", "info");
+            setTimeout(clearAllClientData, 0); // Resetear inmediatamente
+          } catch (e) {
+            showToast("No se pudo abrir WhatsApp.", "error");
+          }
+        };
+
+        // --- FILTRO Y ORDENAMIENTO ---
+        const applyFiltersAndSort = () => {
+          const grid = getEl("productsGrid");
+          const searchInput = /** @type {HTMLInputElement | null} */ (
+            getEl("productSearch")
+          );
+          const sortSelect = /** @type {HTMLSelectElement | null} */ (
+            getEl("sortSelect")
+          );
+          if (!grid || !searchInput || !sortSelect) return;
+
+          const cards = Array.from(queryAll(".js-product-card"));
+          const query = searchInput.value.trim().toLowerCase();
+          const sortKey = sortSelect.value;
+
+          cards.sort((a, b) => {
+            const an = /** @type {HTMLElement} */ (a).dataset.name || "";
+            const bn = /** @type {HTMLElement} */ (b).dataset.name || "";
+            const ap = parseFloat(
+              /** @type {HTMLElement} */ (a).dataset.price || "0"
+            );
+            const bp = parseFloat(
+              /** @type {HTMLElement} */ (b).dataset.price || "0"
+            );
+            switch (sortKey) {
+              case "name-desc":
+                return bn.localeCompare(an);
+              case "price-asc":
+                return ap - bp;
+              case "price-desc":
+                return bp - ap;
+              default:
+                return an.localeCompare(bn);
+            }
+          });
+
+          cards.forEach((card) => {
+            const el = /** @type {HTMLElement} */ (card);
+            const name = el.dataset.name || "";
+            const desc = el.dataset.desc || "";
+            const isVisible =
+              !query || name.includes(query) || desc.includes(query);
+            el.style.display = isVisible ? "" : "none";
+            grid.appendChild(el);
+          });
+        };
+
+        // --- VINCULACIÓN DE EVENTOS ---
+        function bindEvents() {
+          getEl("btnCheckout")?.addEventListener(
+            "click",
+            handleWhatsAppCheckout
+          );
+
+          getEl("btnSelectAll")?.addEventListener("click", () => {
+            selectedIds = cart.map((item) => item.productId);
+            saveSelection();
+            renderCartSummary();
+          });
+
+          getEl("btnClearSelection")?.addEventListener("click", () => {
+            selectedIds = [];
+            saveSelection();
+            renderCartSummary();
+          });
+
+          queryAll(".js-add-to-cart").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const { id, name, price } = /** @type {HTMLElement} */ (btn)
+                .dataset;
+              if (id && name && price) {
+                addToCart({
+                  productId: Number(id),
+                  name,
+                  price: Number(price),
+                  qty: 1,
+                });
+              }
+            });
+          });
+
+          getEl("productSearch")?.addEventListener(
+            "input",
+            applyFiltersAndSort
+          );
+          getEl("sortSelect")?.addEventListener("change", applyFiltersAndSort);
         }
-      });
-    } else {
-      console.error('Formulario no encontrado');
-    }
-  });
-</script>
-    </section>
+
+        // --- INICIALIZACIÓN ---
+        function init() {
+          loadStateFromStorage();
+          renderCartSummary();
+          applyFiltersAndSort();
+          bindEvents();
+
+          window.addEventListener("kukipets:cart-updated", () => {
+            loadStateFromStorage();
+            renderCartSummary();
+          });
+        }
+
+        init();
+      }
+
+      // Ejecutar el script principal cuando el DOM esté listo.
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupKukiPets);
+      } else {
+        setupKukiPets();
+      }
+    </script>
+  </section>
 </BaseLayout>
