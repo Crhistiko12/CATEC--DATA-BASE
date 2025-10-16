@@ -1,34 +1,101 @@
 ---
-import Nav from "../nav.astro";
+// Header responsive con menú hamburguesa
 ---
 
 <header class="bg-[rgb(251,176,59)] text-white sticky top-0 z-50 shadow-md">
-  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-    <!-- Logo -->
-    <a href="/" class="flex items-center gap-6 md:gap-4">
-      <img
-        src="/img/logo/LOGO-FINAL.svg"
-        alt="KukiMascotas"
-        class="h-16 md:h-20 lg:h- w-auto"
-        width="120"
-        height="120"
-      />
-      <span class="font-bold text-xl md:text-2xl hidden sm:inline"
-        >KukiMascotas</span
-      >
-    </a>
+  <div class="container mx-auto px-4 py-3">
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 md:gap-4 flex-shrink-0">
+        <img
+          src="/img/logo/LOGO-FINAL.svg"
+          alt="KukiMascotas"
+          class="h-12 md:h-16 lg:h-20 w-auto"
+          width="120"
+          height="120"
+        />
+        <span class="font-bold text-lg md:text-xl lg:text-2xl hidden sm:inline"
+          >KukiMascotas</span
+        >
+      </a>
 
-    <!-- Navegación -->
-    <Nav />
+      <!-- Navegación Desktop -->
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="/" class="hover:text-black font-medium transition-colors px-2">Inicio</a>
+        <a href="/productos" class="hover:text-black font-medium transition-colors px-2">Productos</a>
+        <a href="/contactos" class="hover:text-black font-medium transition-colors px-2">Contacto</a>
+      </nav>
 
-    <!-- Carrito -->
-    <a href="/carrito" class="relative p-2">
-      <span class="sr-only">Carrito</span>
-      🛒
-      <span
-        class="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
-        >0</span
-      >
-    </a>
+      <!-- Carrito Desktop + Hamburguesa -->
+      <div class="flex items-center gap-2">
+        <!-- Carrito (visible en desktop) -->
+        <a href="/carrito" class="relative p-2 hidden md:flex">
+          <span class="sr-only">Carrito</span>
+          🛒
+          <span
+            id="headerCartCount"
+            class="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+            >0</span
+          >
+        </a>
+
+        <!-- Botón Hamburguesa (solo móvil) -->
+        <button
+          id="mobileMenuBtn"
+          class="md:hidden p-2 focus:outline-none"
+          aria-label="Menú"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menú Móvil (desplegable) -->
+    <nav id="mobileMenu" class="md:hidden hidden flex-col gap-3 pt-4 pb-2">
+      <a href="/" class="hover:text-black font-medium transition-colors py-2 px-2 block">Inicio</a>
+      <a href="/productos" class="hover:text-black font-medium transition-colors py-2 px-2 block">Productos</a>
+      <a href="/contactos" class="hover:text-black font-medium transition-colors py-2 px-2 block">Contacto</a>
+      <a href="/carrito" class="hover:text-black font-medium transition-colors py-2 px-2 block border-t border-orange-400 pt-3">
+        🛒 Ver Carrito (<span id="mobileCartCount">0</span>)
+      </a>
+    </nav>
   </div>
 </header>
+
+<script>
+  // Toggle menú móvil
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+      mobileMenu.classList.toggle('flex');
+    });
+  }
+
+  // Actualizar contadores de carrito
+  function updateCartCounts() {
+    try {
+      const cart = JSON.parse(localStorage.getItem('kukipets_cart') || '[]');
+      const count = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
+      
+      const headerCount = document.getElementById('headerCartCount');
+      const mobileCount = document.getElementById('mobileCartCount');
+      
+      if (headerCount) headerCount.textContent = String(count);
+      if (mobileCount) mobileCount.textContent = String(count);
+    } catch {
+      // Ignorar errores
+    }
+  }
+
+  // Actualizar al cargar y cuando cambie el carrito
+  document.addEventListener('DOMContentLoaded', updateCartCounts);
+  window.addEventListener('kukipets:cart-updated', updateCartCounts);
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'kukipets_cart') updateCartCounts();
+  });
+</script>

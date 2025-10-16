@@ -76,74 +76,13 @@ const { default: children } = Astro.props;
   </head>
 
   <body class="bg-white font-sans text-black">
-    <!-- HEADER (mejorado pero conservando tu estructura) -->
-    <header class="bg-[rgb(251,176,59)] text-white sticky top-0 z-50 shadow-md">
-      <div
-        class="container mx-auto px-4 py-3 flex justify-between items-center"
-      >
-        <!-- Logo (misma ruta que ya usas) -->
-        <a href="/" class="flex items-center gap-4 md:gap-6">
-          <img
-            src="/img/logo/LOGO-FINAL.svg"
-            alt="Logo KukiMascotas"
-            class="h-16 md:h-20 lg:h-24 w-auto"
-            width="160"
-            height="96"
-          />
-          <span
-            class="text-white font-bold text-2xl md:text-3xl hidden md:inline"
-            >KukiPets</span
-          >
-        </a>
+    <!-- HEADER (importado desde componente) -->
+    <slot name="header">
+      <!-- El header se insertará desde cada página o usaremos el componente Header -->
+    </slot>
 
-        <!-- Nav (conserva tus enlaces actuales) -->
-        <nav class="flex gap-4 items-center">
-          <a
-            href="/"
-            class="text-white hover:text-black font-medium px-3 py-2 transition-colors"
-          >
-            Inicio
-          </a>
-          <a
-            href="/productos"
-            class="text-white hover:text-black font-medium px-3 py-2 transition-colors"
-          >
-            Productos
-          </a>
-          <a
-            href="/contactos"
-            class="text-white hover:text-black font-medium px-3 py-2 transition-colors"
-          >
-            Contacto
-          </a>
-          <!-- Icono Carrito -->
-          <a
-            href="/carrito"
-            class="relative ml-2 inline-flex items-center justify-center rounded-full p-2 hover:bg-orange-400 transition-colors"
-            aria-label="Ver carrito"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-white"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              ><path
-                d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h9v-2h-8.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h5.72c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.3.12-.47 0-.55-.45-1-1-1h-14l-.94-2h-3.06v2h2l.75 1.5 2.1 4.2-1.45 2.62c-.2.35-.3.75-.3 1.18 0 1.31 1.06 2.37 2.37 2.37h9.13v-2h-9.13l1.1-2h6.58c.38 0 .72-.21.89-.55l2.7-4.9h-12.03l-1.3-2.6zm0 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
-              ></path></svg
-            >
-            <span
-              id="headerCartCount"
-              class="absolute -top-1 -right-1 bg-black text-white text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[20px] text-center"
-              >0</span
-            >
-          </a>
-        </nav>
-      </div>
-    </header>
-
-    <!-- CONTENIDO (sin cambios, seguro) -->
-    <main>
-      <!-- Reduze el padding-top para mejor espacio -->
+    <!-- CONTENIDO -->
+    <main class="w-full overflow-x-hidden">
       <slot />
     </main>
 
@@ -204,8 +143,8 @@ const { default: children } = Astro.props;
     </div>
 
     <!-- FOOTER (mejorado pero similar) -->
-    <footer class="bg-yellow-400 py-8 text-gray-800">
-      <div class="container mx-auto px-4 text-center">
+    <footer class="bg-[rgb(251,176,59)] py-8 text-gray-800 w-full">
+      <div class="container mx-auto px-4 text-center max-w-7xl">
         <!-- Logo Kukipets -->
         <img
           src="/img/logo/Logo-footer.svg"

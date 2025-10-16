@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-// Elimina esta línea redundante (ya se importa en BaseLayout)
-// import "../styles/global.css"; 
+import Header from "../components/header/header.astro";
 import hero from "../../public/img/banner/BANNER 2 KUKI.webp";
 import HuesoSano from "../../public/img/img/limpieza-dental.jpg";
 import CorazonFuerte from "../../public/img/img/corazon-fuerte.jpg";
@@ -10,17 +9,18 @@ import natural100 from "../../public/img/img/100-natural.jpg";
 import { Image } from "astro:assets";
 ---
 <BaseLayout>
-  <!-- Banner Principal - Imagen más segura  -->
-  <section id="inicio" class="relative">
-    <!-- Usa el componente Image de Astro para optimización -->
+  <Header slot="header" />
+  
+  <!-- Banner Principal - Responsive optimizado -->
+  <section id="inicio" class="relative w-full overflow-hidden">
     <Image 
       src={hero}
       alt="Perro feliz comiendo alimento KukiPets" 
-      class="w-full object-cover h-[60vh] md:h-[85vh] lg:h-screen mx-auto shadow-md block"
+      class="w-full object-cover h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] block"
       loading="eager"
     />
-    <div class="absolute inset-0 flex items-center justify-center ">
-      <h1 class="text-white text-3xl sm:text-4xl md:text-6xl font-bold text-center px-4 drop-shadow-2xl">
+    <div class="absolute inset-0 flex items-center justify-center px-4">
+      <h1 class="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center drop-shadow-2xl max-w-4xl">
         ¡Ellos saben lo delicioso que son!
       </h1>
     </div>

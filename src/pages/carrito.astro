@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/header/header.astro';
 
 // SEO Metadata
 const pageTitle = "Carrito de Compras | KukiPets Santa Cruz";
@@ -44,20 +45,24 @@ const businessData = {
 };
 ---
 <BaseLayout title={pageTitle} description={pageDescription} keywords={keywords}>
+  <Header slot="header" />
+  
   <script type="application/ld+json">
     {JSON.stringify(businessData)}
   </script>
-  <section class="py-12 container mx-auto px-4">
-    <h1 class="text-3xl font-bold mb-6 text-center bg-orange-500 text-white py-3 px-6 rounded-lg">
+  
+  <section class="py-8 md:py-12 w-full px-4">
+    <div class="container mx-auto max-w-7xl">
+    <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-center bg-orange-500 text-white py-3 px-4 md:px-6 rounded-lg">
       Carrito de Compras | KukiPets Santa Cruz
     </h1>
 
-    <p class="text-center text-lg mb-8 text-gray-700 max-w-3xl mx-auto bg-orange-500 text-white py-3 px-6 rounded-lg">
+    <p class="text-center text-base md:text-lg mb-6 md:mb-8 text-white max-w-3xl mx-auto bg-orange-500 py-3 px-4 md:px-6 rounded-lg">
       Completa tu pedido de productos para mascotas en KukiPets. 
       Envíos rápidos en Santa Cruz, Bolivia. ¿Necesitas ayuda? Llámanos al +591 77970901
     </p>
 
-    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
       <!-- Lista de productos -->
       <div class="lg:col-span-2">
         <div id="emptyCart" class="text-center py-12 text-gray-600" style="display: none;">
@@ -338,4 +343,6 @@ const businessData = {
     window.changeQuantity = changeQuantity;
     window.removeItem = removeItem;
   </script>
+    </div>
+  </section>
 </BaseLayout>

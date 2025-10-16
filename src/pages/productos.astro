@@ -2,6 +2,7 @@
 const Protada_Productos = "/img/banner/BANNER-productos.webp";
 import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/header/header.astro";
 
 // SEO Metadata
 const pageTitle = "Productos para Mascotas en Santa Cruz | KukiPets";
@@ -108,29 +109,32 @@ const formatBOB = (n) => {
 ---
 
 <BaseLayout title={pageTitle} description={pageDescription} keywords={keywords}>
+  <Header slot="header" />
+  
   <script type="application/ld+json">
     {JSON.stringify(businessData)}
   </script>
-  <section id="inicio" class="relative !p-0 overflow-hidden">
-    <!-- Usa el componente Image de Astro para optimización -->
+  
+  <section id="inicio" class="relative w-full overflow-hidden p-0">
     <Image
       src={Protada_Productos}
       alt="Perro feliz comiendo alimento KukiPets"
       width="896"
       height="700"
-      class="h-full w-full object-cover rounded-[40px] !my-0 !mx-auto shadow-md block"
+      class="w-full h-auto max-h-[40vh] sm:max-h-[50vh] md:max-h-[60vh] object-cover block"
       loading="eager"
     />
   </section>
 
-  <section class="py-16 container mx-auto px-4">
+  <section class="py-8 md:py-16 w-full px-4">
+    <div class="container mx-auto max-w-7xl">
     <h1
-      class="text-4xl font-bold text-center mb-12 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+      class="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 md:mb-12 bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 md:px-6 rounded-lg transition-colors"
     >
       Productos para Mascotas en Santa Cruz | KukiPets
     </h1>
 
-    <p class="text-center text-lg mb-8 text-white max-w-3xl mx-auto bg-orange-500 py-3 px-6 rounded-lg">
+    <p class="text-center text-base md:text-lg mb-6 md:mb-8 text-white max-w-3xl mx-auto bg-orange-500 py-3 px-4 md:px-6 rounded-lg">
       {pageDescription}
     </p>
 
@@ -155,7 +159,7 @@ const formatBOB = (n) => {
 
     <!-- Buscador y ordenamiento -->
     <div
-      class="max-w-5xl mx-auto mb-6 px-4 grid grid-cols-1 sm:grid-cols-3 gap-3"
+      class="max-w-5xl mx-auto mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3"
     >
       <div class="sm:col-span-2">
         <label for="productSearch" class="sr-only">Buscar productos</label>
@@ -182,7 +186,7 @@ const formatBOB = (n) => {
 
     <div
       id="productsGrid"
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
     >
       {
         Array.isArray(productos) && productos.length > 0 ? (
@@ -611,5 +615,6 @@ ${productLines}
         setupKukiPets();
       }
     </script>
+    </div>
   </section>
 </BaseLayout>
